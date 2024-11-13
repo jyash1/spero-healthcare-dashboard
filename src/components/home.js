@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Card, Typography, Box, Tabs, Tab, Select, MenuItem } from '@mui/material';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import MainHeader from './main-header';
@@ -6,6 +6,8 @@ import ServiceDetails from './service';
 
 const HomePage = () => {
     const [tabIndex, setTabIndex] = useState(0);
+    const [assignData, setAssignData] = useState({ today: 0, this_month: 0, total: 0 });
+    const [unassignData, setUnassignData] = useState({ today: 0, this_month: 0, total: 0 });
 
     const handleTabChange = (event, newValue) => {
         setTabIndex(newValue);
@@ -14,9 +16,8 @@ const HomePage = () => {
     const tabStyles = (index) => ({
         backgroundColor: tabIndex === index ? "#6AA5EB" : "#fff",
         color: tabIndex === index ? "#fff !important" : "#000",
-        borderRadius: tabIndex === index ? 2 : 2
+        borderRadius: 2
     });
-
 
     const serviceData = [
         { name: 'Completed Services', value: 16 },
@@ -24,20 +25,44 @@ const HomePage = () => {
         { name: 'Pending', value: 84 },
     ];
 
-    const professionalAvailability = [
-        { name: 'ASSIGN', value: 58 },
-        { name: 'UN ASSIGN', value: 227 },
-    ];
-
     const paymentData = [
         { name: 'Payment', payment: 2500 },
+        { name: 'Payment', payment: 500 },
+        { name: 'Payment', payment: 200 },
+        { name: 'Payment', payment: 1400 },
+        { name: 'Payment', payment: 1000 },
+        { name: 'Payment', payment: 2500 },
+        { name: 'Payment', payment: 500 },
+        { name: 'Payment', payment: 200 },
+        { name: 'Payment', payment: 1400 },
+        { name: 'Payment', payment: 1000 },
+    ];
+
+    const fetchProfessionalData = async () => {
+        try {
+            const response = await fetch('http://122.176.232.35:8008/web/professional-count/');
+            const data = await response.json();
+            setAssignData(data.assigned_professionals);
+            setUnassignData(data.unassigned_professionals);
+        } catch (error) {
+            console.error('Error fetching professional data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchProfessionalData();
+    }, [tabIndex]);
+
+    const professionalAvailability = [
+        { name: 'ASSIGN', value: tabIndex === 0 ? assignData.today : tabIndex === 1 ? assignData.this_month : assignData.total },
+        { name: 'UN ASSIGN', value: tabIndex === 0 ? unassignData.today : tabIndex === 1 ? unassignData.this_month : unassignData.total },
     ];
 
     return (
-        <Box sx={{ backgroundColor: '#F5F5F5', minHeight: '100vh' }}>
+        <Box sx={{ backgroundColor: '#F5F5F5', height: '100vh' }}>
             <MainHeader />
             <Box sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, background: "#6AA5EB", borderRadius: 2, p: 1 }}>
+                <Box sx={{ display: { md: 'flex' }, alignItems: 'center', mb: 2, background: "#6AA5EB", borderRadius: 2, p: 1 }}>
                     <Box>
                         <Tabs
                             value={tabIndex}
@@ -50,15 +75,15 @@ const HomePage = () => {
                             <Tab label="Last Month" sx={tabStyles(2)} />
                         </Tabs>
                     </Box>
-                    <Box sx={{ position: 'relative', margin: "auto", }}>
-                        <Select variant="outlined" defaultValue="" displayEmpty sx={{ backgroundColor: '#fff', borderRadius: 1, paddingX: 12 }}>
+                    <Box sx={{ position: 'relative', marginLeft: { md: 35, } }}>
+                        <Select variant="outlined" defaultValue="" displayEmpty sx={{ backgroundColor: '#fff', borderRadius: 1, paddingX: { md: 12 } }}>
                             <MenuItem value="">Select Hospital</MenuItem>
                         </Select>
                     </Box>
                 </Box>
 
                 <Grid container spacing={1} sx={{ mt: 2 }}>
-                    <Grid item xs={12} md={7} sx={{ display: 'flex', border: "1px solid grey", alignItems: 'center', p: 2, gap: 2, borderRadius: 5 }}>
+                    <Grid item xs={12} md={7} sx={{ display: { md: 'flex' }, border: "1px solid grey", alignItems: 'center', p: 2, gap: 2, borderRadius: 5 }}>
                         {['Total Enquiry', 'Converted', 'In follow up', 'Cancelled', 'Pending'].map((label, index) => (
                             <Grid item xs={12} md={1.8} key={index} sx={{ margin: "auto", }}>
                                 <Card sx={{ p: 2, textAlign: 'center', color: 'white', borderRadius: 4, backgroundColor: ['#6a0dad', '#ff6347', '#87cefa', '#ffdd57', '#4caf50'][index] }}>
@@ -71,11 +96,15 @@ const HomePage = () => {
 
                     <Grid item xs={12} md={5}>
                         <Card sx={{ p: 2, alignItems: 'center', gap: 2, borderRadius: 5, background: '#6AA5EB', color: "#FFF" }}>
-                            <Typography variant="h6">PAYMENT COLLECTED</Typography>
+                            <Typography variant="h6" sx={{ textAlign: 'left', fontSize: '0.9rem' }}>PAYMENT COLLECTED</Typography>
                             <Typography variant="h5" sx={{ textAlign: 'center', mt: 1 }}>2500</Typography>
-                            <ResponsiveContainer width="100%" height={50}>
-                                <BarChart data={paymentData}>
-                                    <Bar dataKey="payment" />
+                            <ResponsiveContainer width="100%" height={50} sx={{ margin: 'auto' }}>
+                                <BarChart data={paymentData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                                    <Bar
+                                        dataKey="payment"
+                                        fill="#ffffff"
+                                        barSize={20}
+                                    />
                                 </BarChart>
                             </ResponsiveContainer>
                         </Card>
@@ -84,7 +113,7 @@ const HomePage = () => {
 
                 <Grid container spacing={1} sx={{ mt: 2 }}>
                     <Grid item xs={12} md={4}>
-                        <ServiceDetails />
+                        <ServiceDetails tabIndex={tabIndex} />
                     </Grid>
 
                     <Grid item xs={12} md={4}>
@@ -95,7 +124,7 @@ const HomePage = () => {
                         <Box sx={{ mt: 2 }}>
                             <Card sx={{ p: 2 }}>
                                 <Typography variant="h6" sx={{ textAlign: 'center' }}>TOTAL SERVICES</Typography>
-                                <ResponsiveContainer width="100%" height={260}>
+                                <ResponsiveContainer width="100%" height={280}>
                                     <PieChart>
                                         <Pie data={serviceData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}>
                                             <Cell fill="#1976d2" />
@@ -126,7 +155,7 @@ const HomePage = () => {
                                     <Typography variant="h6" sx={{ textAlign: 'center' }}>
                                         PROFESSIONALS AVAILABILITY
                                     </Typography>
-                                    <ResponsiveContainer width="100%" height={260}>
+                                    <ResponsiveContainer width="100%" height={280}>
                                         <PieChart>
                                             <Pie
                                                 data={professionalAvailability}
@@ -148,10 +177,13 @@ const HomePage = () => {
                                                 iconType="circle"
                                                 formatter={(value, entry) => (
                                                     <span style={{ color: entry.color, fontSize: 14 }}>
-                                                        {value === "ASSIGN" ? "ASSIGN 58" : "UN ASSIGN 227"}
+                                                        {value === "ASSIGN"
+                                                            ? `ASSIGN ${tabIndex === 0 ? assignData.today : tabIndex === 1 ? assignData.this_month : assignData.total}`
+                                                            : `UN ASSIGN ${tabIndex === 0 ? unassignData.today : tabIndex === 1 ? unassignData.this_month : unassignData.total}`}
                                                     </span>
                                                 )}
                                             />
+
                                         </PieChart>
                                     </ResponsiveContainer>
                                 </Card>
