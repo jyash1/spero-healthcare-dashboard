@@ -59,10 +59,10 @@ const HomePage = () => {
     ];
 
     return (
-        <Box sx={{ backgroundColor: '#F5F5F5', height: '100vh' }}>
+        <Box sx={{ minHeight: '100vh' }}>
             <MainHeader />
             <Box sx={{ p: 2 }}>
-                <Box sx={{ display: { md: 'flex' }, alignItems: 'center', mb: 2, background: "#6AA5EB", borderRadius: 2, p: 1 }}>
+                <Box sx={{ display: { md: 'flex' }, justifyContent: { md: 'space-between' }, alignItems: 'center', mb: 2, background: "#6AA5EB", borderRadius: 2, p: 1 }}>
                     <Box>
                         <Tabs
                             value={tabIndex}
@@ -75,18 +75,21 @@ const HomePage = () => {
                             <Tab label="Last Month" sx={tabStyles(2)} />
                         </Tabs>
                     </Box>
-                    <Box sx={{ position: 'relative', marginLeft: { md: 35, } }}>
+                    <Box sx={{ position: 'relative', margin: "auto" }}>
                         <Select variant="outlined" defaultValue="" displayEmpty sx={{ backgroundColor: '#fff', borderRadius: 1, paddingX: { md: 12 } }}>
                             <MenuItem value="">Select Hospital</MenuItem>
                         </Select>
                     </Box>
+                    <Box>
+
+                    </Box>
                 </Box>
 
                 <Grid container spacing={1} sx={{ mt: 2 }}>
-                    <Grid item xs={12} md={7} sx={{ display: { md: 'flex' }, border: "1px solid grey", alignItems: 'center', p: 2, gap: 2, borderRadius: 5 }}>
+                    <Grid item xs={12} md={8} sx={{ display: { md: 'flex' }, gap: 2, border: "1px solid grey", alignItems: 'center', p: 2, borderRadius: 5 }}>
                         {['Total Enquiry', 'Converted', 'In follow up', 'Cancelled', 'Pending'].map((label, index) => (
-                            <Grid item xs={12} md={1.8} key={index} sx={{ margin: "auto", }}>
-                                <Card sx={{ p: 2, textAlign: 'center', color: 'white', borderRadius: 4, backgroundColor: ['#6a0dad', '#ff6347', '#87cefa', '#ffdd57', '#4caf50'][index] }}>
+                            <Grid item xs={12} md={2.4} key={index} sx={{ margin: "auto", }}>
+                                <Card sx={{ p: 2, textAlign: 'center', color: 'white', borderRadius: 4, mb: 2, backgroundColor: ['#6a0dad', '#ff6347', '#87cefa', '#ffdd57', '#4caf50'][index] }}>
                                     <Typography variant="body1">{label}</Typography>
                                     <Typography variant="h4">{[6, 2, 0, 0, 4][index]}</Typography>
                                 </Card>
@@ -94,7 +97,7 @@ const HomePage = () => {
                         ))}
                     </Grid>
 
-                    <Grid item xs={12} md={5}>
+                    <Grid item xs={12} md={4}>
                         <Card sx={{ p: 2, alignItems: 'center', gap: 2, borderRadius: 5, background: '#6AA5EB', color: "#FFF" }}>
                             <Typography variant="h6" sx={{ textAlign: 'left', fontSize: '0.9rem' }}>PAYMENT COLLECTED</Typography>
                             <Typography variant="h5" sx={{ textAlign: 'center', mt: 1 }}>2500</Typography>
@@ -112,11 +115,11 @@ const HomePage = () => {
                 </Grid>
 
                 <Grid container spacing={1} sx={{ mt: 2 }}>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={5}>
                         <ServiceDetails tabIndex={tabIndex} />
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={3.5}>
                         <Card sx={{ p: 2, backgroundColor: '#ff6347', color: 'white', textAlign: 'center', display: 'flex', justifyContent: 'center', borderRadius: 2 }}>
                             <Typography variant="h6">Service Till Date :</Typography>
                             <Typography variant="h6">259198</Typography>
@@ -124,7 +127,7 @@ const HomePage = () => {
                         <Box sx={{ mt: 2 }}>
                             <Card sx={{ p: 2 }}>
                                 <Typography variant="h6" sx={{ textAlign: 'center' }}>TOTAL SERVICES</Typography>
-                                <ResponsiveContainer width="100%" height={280}>
+                                <ResponsiveContainer width="100%" height={320}>
                                     <PieChart>
                                         <Pie data={serviceData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}>
                                             <Cell fill="#1976d2" />
@@ -138,7 +141,7 @@ const HomePage = () => {
                         </Box>
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={3.5}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sx={{ display: 'flex' }}>
                                 {['In process', 'Pending'].map((label, index) => (
@@ -155,7 +158,7 @@ const HomePage = () => {
                                     <Typography variant="h6" sx={{ textAlign: 'center' }}>
                                         PROFESSIONALS AVAILABILITY
                                     </Typography>
-                                    <ResponsiveContainer width="100%" height={280}>
+                                    <ResponsiveContainer width="100%" height={320}>
                                         <PieChart>
                                             <Pie
                                                 data={professionalAvailability}
